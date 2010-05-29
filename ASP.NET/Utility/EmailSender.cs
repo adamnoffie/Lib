@@ -95,7 +95,7 @@ namespace Utility
         /// web.config::system.net/mailSettings/smtp/network/username if the first is not specified
         /// </summary>
         /// <returns></returns>
-        public static string GetSmtpFromEmailAddress()
+        public static string GetEmailAddressFromSmtp()
         {
             // Get the configuration <mailSettings> element
             Configuration config = WebConfigurationManager.OpenWebConfiguration(

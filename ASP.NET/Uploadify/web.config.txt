@@ -1,0 +1,15 @@
+	<appSettings>
+		<add key="Photo_MaxDimension" value="1680"/>
+		<add key="Photo_MaxDimension_Thumb" value="200"/>
+	</appSettings>
+    
+    
+<location path="Admin/UploadifyImages.ashx">
+    <system.web>
+        <authorization>
+            <allow users="*"/> <!-- Need this so that Flash can POST to it in non-IE browsers -->
+        </authorization>
+        <!-- for uploads, max: 15360 15MB, 20 minutes -->
+        <httpRuntime maxRequestLength="15360" executionTimeout="1200"/>
+    </system.web>
+</location>

@@ -15,16 +15,7 @@ using System.Xml.Linq;
 /// </summary>
 public static class UserController
 {
-    private const string _db_key = "SITE_DataContext";
-    private static SITE_DataContext db
-    {
-        get
-        {
-            if (HttpContext.Current.Items[_db_key] == null)
-                HttpContext.Current.Items[_db_key] = new SITE_DataContext();
-            return (SITE_DataContext)HttpContext.Current.Items[_db_key];
-        }
-    }
+    private static APPLICATION_DataContext db { get { return DataContext.Current; } }
 
     /// <summary>
     /// {0} - url for validation

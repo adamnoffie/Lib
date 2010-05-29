@@ -30,10 +30,10 @@ namespace Utility
         ///     Firefox 2+, Internet Explorer 7+, Opera 9+
         /// </summary>
         /// <returns>bool</returns>
-        public static bool TestBrowser()
+        public static bool TestBrowser(HttpContext ctxt)
         {
-            string browser = HttpContext.Current.Request.Browser.Browser;
-            int majVersion = HttpContext.Current.Request.Browser.MajorVersion;
+            string browser = ctxt.Request.Browser.Browser;
+            int majVersion = ctxt.Request.Browser.MajorVersion;
             if (browser.Equals("firefox", StringComparison.OrdinalIgnoreCase))
             {
                 if (majVersion >= 2)
@@ -56,9 +56,9 @@ namespace Utility
         /// Force a redirect to ssl secured version of page (https://) if not already
         /// using ssl -- specifies a port if appSetting 'sslPort' is set in Web.config
         /// </summary>
-        public static void ForceSSL()
+        public static void ForceSSL(HttpContext ctxt)
         {
-            HttpRequest request = HttpContext.Current.Request;
+            HttpRequest request = ctxt.Request;
 
             if (!request.IsSecureConnection)
             {
@@ -72,7 +72,7 @@ namespace Utility
                     newURL.Port = 443;
 
                 //Force into secure channel
-                HttpContext.Current.Response.Redirect(newURL.ToString());
+                ctxt.Response.Redirect(newURL.ToString());
             }
         }
 
@@ -101,9 +101,9 @@ namespace Utility
         /// <param name="serverUrl">The Url to resolve</param>
         /// <param name="forceHttps">Force a https:// in the url (SSL)</param>
         /// <returns>absolute url</returns>
-        public static string ResolveServerUrl(string serverUrl, bool forceHttps)
+        public static string ResolveServerUrl(HttpContext ctxt, string serverUrl, bool forceHttps)
         {
-            Uri result = HttpContext.Current.Request.Url;
+            Uri result = ctxt.Request.Url;
             if (!string.IsNullOrEmpty(serverUrl))
             {
                 serverUrl = ResolveUrl(serverUrl);
@@ -128,12 +128,23 @@ namespace Utility
         /// </summary>
         /// <param name="useSSL">Should base path start with http:// or https:// </param>
         /// <returns>string</returns>
-        public static string GetBasePath(bool useSSL)
+        public static string GetBasePath(HttpContext ctxt, bool useSSL)
         {
             string basePath = useSSL ? "https://" : "http://";
-            basePath += HttpContext.Current.Request.Url.Authority +
-                HttpContext.Current.Request.ApplicationPath + "/";
+            basePath += ctxt.Request.Url.Authority + ctxt.Request.ApplicationPath + "/";
             return basePath;
+        }
+
+        /// <summary>
+        /// Tell browsers not to cache the current response
+        /// </summary>
+        /// <param name="context"></param>
+        public static void DisableBrowserCaching(HttpContext ctxt)
+        {
+            ctxt.Response.Cache.SetExpires(DateTime.UtcNow.AddDays(-1));
+            ctxt.Response.Cache.SetValidUntilExpires(false);
+            ctxt.Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            ctxt.Response.Cache.SetNoStore();
         }
     }
 }
